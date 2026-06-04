@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InfinevoD | Advanced BIM Solutions</title>
+  
+  <!-- Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Global Constraints */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: black;
+      color: white;
+      margin: 0;
+      overflow: hidden; /* Cinematic single-screen view */
+    }
+
+    /* BACKGROUND IMAGE ANIMATION (Ken Burns Effect) */
+    .bg-slide {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      z-index: 0;
+      transition: opacity 1.2s ease-in-out; /* Smooth crossfade */
+      pointer-events: none;
+    }
+
+    .bg-slide.active {
+      opacity: 0.6; /* Slight dimming so text is readable */
+      animation: kenBurns 20s ease-out forwards;
+    }
+
+    @keyframes kenBurns {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); } /* Slow zoom in */
+    }
+
+    /* Bottom Blur Overlay */
+    .bottom-blur-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      mask-image: linear-gradient(to top, black 0%, transparent 55%);
+      -webkit-mask-image: linear-gradient(to top, black 0%, transparent 55%);
+    }
+
+    /* Liquid Glass Buttons */
+    .liquid-glass {
+      background: rgba(255, 255, 255, 0.01);
+      background-blend-mode: luminosity;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: none;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .liquid-glass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.4px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    /* Blur Fade Up Animation */
+    @keyframes blurFadeUp {
+      from { opacity: 0; filter: blur(20px); transform: translateY(40px); }
+      to { opacity: 1; filter: blur(0); transform: translateY(0); }
+    }
+
+    .animate-blur-fade-up {
+      opacity: 0;
+      animation: blurFadeUp 1s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="relative w-full h-screen bg-black">
+
+  <!-- 1. DYNAMIC BACKGROUND IMAGES (z-0) -->
+  <div id="bg-container">
+    <!-- Image divs will be injected here by JS -->
+  </div>
+
+  <!-- 2. BOTTOM BLUR OVERLAY (Fixed, z-1) -->
+  <div class="bottom-blur-overlay"></div>
+
+  <!-- 3. NAVBAR (Absolute, z-50) -->
+  <nav class="absolute top-0 left-0 w-full z-50 flex justify-between items-center px-4 sm:px-6 md:px-12 py-4 md:py-6">
+    
+    <!-- Left: Logo -->
+    <div class="h-8 md:h-10 text-xl font-bold tracking-tight animate-blur-fade-up flex items-center" style="animation-delay: 0ms;">
+      INFINEVO<span class="text-gray-400">D</span>
+    </div>
+
+    <!-- Center: Desktop Nav Links (Mapped to disciplines) -->
+    <div class="hidden lg:flex items-center space-x-8">
+      <button onclick="goToSlide(0)" class="text-sm font-medium hover:text-gray-300 transition-colors animate-blur-fade-up" style="animation-delay: 100ms;">Architectural</button>
+      <button onclick="goToSlide(1)" class="text-sm font-medium hover:text-gray-300 transition-colors animate-blur-fade-up" style="animation-delay: 150ms;">Structural</button>
+      <button onclick="goToSlide(2)" class="text-sm font-medium hover:text-gray-300 transition-colors animate-blur-fade-up" style="animation-delay: 200ms;">Interior Design</button>
+      <button onclick="goToSlide(3)" class="text-sm font-medium hover:text-gray-300 transition-colors animate-blur-fade-up" style="animation-delay: 250ms;">Visualization</button>
+      <button onclick="goToSlide(4)" class="text-sm font-medium hover:text-gray-300 transition-colors animate-blur-fade-up" style="animation-delay: 300ms;">Documentation</button>
+    </div>
+
+    <!-- Right: Buttons -->
+    <div class="flex items-center space-x-3">
+      <button class="hidden sm:flex liquid-glass rounded-full px-4 md:px-6 py-2 animate-blur-fade-up" style="animation-delay: 350ms;">
+        <i data-lucide="search" class="w-[18px] h-[18px] mr-2"></i>
+        <span class="text-sm font-medium">Search</span>
+      </button>
+      
+      <button class="hidden sm:flex liquid-glass w-10 h-10 rounded-full animate-blur-fade-up" style="animation-delay: 400ms;">
+        <i data-lucide="user" class="w-[18px] h-[18px]"></i>
+      </button>
+
+      <!-- Mobile Menu Toggle Button -->
+      <button id="mobile-menu-btn" class="lg:hidden liquid-glass w-10 h-10 rounded-full animate-blur-fade-up" style="animation-delay: 350ms;">
+        <i id="menu-icon" data-lucide="menu" class="absolute w-[18px] h-[18px] transition-all duration-500 ease-out rotate-0 opacity-100 scale-100"></i>
+        <i id="close-icon" data-lucide="x" class="absolute w-[18px] h-[18px] transition-all duration-500 ease-out -rotate-180 opacity-0 scale-50"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 4. MOBILE MENU DROPDOWN (z-40) -->
+  <div id="mobile-menu" class="lg:hidden absolute top-[72px] left-0 w-full z-40 bg-black/95 backdrop-blur-lg border-t border-b border-gray-800 shadow-2xl transition-all duration-500 ease-out -translate-y-4 opacity-0 pointer-events-none">
+    <div class="flex flex-col p-4">
+      <button onclick="goToSlide(0); toggleMenu();" class="text-left text-sm font-medium py-3 px-3 rounded-lg hover:bg-gray-800/50 transition-colors">Architectural BIM</button>
+      <button onclick="goToSlide(1); toggleMenu();" class="text-left text-sm font-medium py-3 px-3 rounded-lg hover:bg-gray-800/50 transition-colors">Structural Detailing</button>
+      <button onclick="goToSlide(2); toggleMenu();" class="text-left text-sm font-medium py-3 px-3 rounded-lg hover:bg-gray-800/50 transition-colors">Interior BIM</button>
+      <button onclick="goToSlide(3); toggleMenu();" class="text-left text-sm font-medium py-3 px-3 rounded-lg hover:bg-gray-800/50 transition-colors">3D Visualization</button>
+      <button onclick="goToSlide(4); toggleMenu();" class="text-left text-sm font-medium py-3 px-3 rounded-lg hover:bg-gray-800/50 transition-colors">Construction Docs</button>
+    </div>
+  </div>
+
+  <!-- 5. HERO CONTENT (Absolute, z-10, bottom aligned) -->
+  <div class="absolute inset-0 z-10 px-4 sm:px-6 md:px-12 pb-8 md:pb-16 flex flex-col justify-end pointer-events-none">
+    <div class="flex flex-col md:flex-row items-end gap-8 pointer-events-auto">
+      
+      <!-- Left Side: Copy & Meta (Dynamically injected by JS) -->
+      <div id="slide-wrapper" class="flex-1 w-full">
+        <!-- Text Content gets rendered here -->
+      </div>
+
+      <!-- Right Side: Navigation Arrows -->
+      <div class="flex gap-3 md:w-auto self-start md:self-end">
+        <button id="prev-btn" class="liquid-glass rounded-full px-4 sm:px-6 py-2.5 sm:py-3 animate-blur-fade-up transition-transform hover:scale-105 active:scale-95" style="animation-delay: 800ms;">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </button>
+        <button id="next-btn" class="liquid-glass rounded-full px-4 sm:px-6 py-2.5 sm:py-3 animate-blur-fade-up transition-transform hover:scale-105 active:scale-95" style="animation-delay: 900ms;">
+          <i data-lucide="chevron-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    lucide.createIcons();
+
+    // ==========================================
+    // 📁 DEPLOYABLE DATA (REPLACE IMAGES HERE)
+    // ==========================================
+    const slides = [
+      {
+        id: "arch",
+        bgImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop", // REPLACE WITH YOUR ARCHITECTURAL IMAGE
+        meta1: "LOD 100-500", meta2: "ISO 19650", meta3: "Clash-Free",
+        title: "Architectural BIM Modeling.",
+        desc: "Transform traditional construction processes by creating intelligent 3D digital twins. Embedded data enhances visualization, coordination, and efficiency across all project phases.",
+        cta1: "Explore Services", cta2: "View Portfolio"
+      },
+      {
+        id: "struct",
+        bgImage: "https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop", // REPLACE WITH YOUR STRUCTURAL IMAGE
+        meta1: "AISC/Eurocodes", meta2: "Tekla & Revit", meta3: "Fabrication",
+        title: "Structural Engineering.",
+        desc: "Detailed parametric structural models that streamline documentation, optimize material usage, and ensure integration with architectural and MEP systems.",
+        cta1: "View Tolerances", cta2: "Engineering Specs"
+      },
+      {
+        id: "interior",
+        bgImage: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop", // REPLACE WITH YOUR INTERIOR IMAGE
+        meta1: "Space Planning", meta2: "FF&E Ready", meta3: "Millwork",
+        title: "Interior Design BIM.",
+        desc: "Create detailed digital environments with precise information about finishes, fixtures, furnishings, and spatial arrangements. Streamline material specification.",
+        cta1: "View Spaces", cta2: "Material Libs"
+      },
+      {
+        id: "vis",
+        bgImage: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2012&auto=format&fit=crop", // REPLACE WITH YOUR 3D RENDER IMAGE
+        meta1: "Unreal Engine", meta2: "VR/AR", meta3: "Photorealistic",
+        title: "Presentation Modeling.",
+        desc: "Convert technical building information into compelling visual narratives. Cinematic walkthroughs and immersive VR experiences derived directly from your BIM data.",
+        cta1: "Launch VR Tour", cta2: "Video Reel"
+      },
+      {
+        id: "docs",
+        bgImage: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2071&auto=format&fit=crop", // REPLACE WITH YOUR 2D/DOCS IMAGE
+        meta1: "As-Builts", meta2: "Shop Drawings", meta3: "Code Compliant",
+        title: "Construction Documents.",
+        desc: "BIM-extracted precision. Generate accurate drawing sets, schedules, and specifications ensuring consistency between plans, elevations, sections, and details.",
+        cta1: "Download Samples", cta2: "Process Flow"
+      }
+    ];
+
+    let currentSlide = 0;
+    const slideWrapper = document.getElementById('slide-wrapper');
+    const bgContainer = document.getElementById('bg-container');
+
+    // 1. Pre-load background image divs
+    function initBackgrounds() {
+      slides.forEach((slide, index) => {
+        const bgDiv = document.createElement('div');
+        bgDiv.className = `bg-slide ${index === 0 ? 'active' : ''}`;
+        bgDiv.id = `bg-${index}`;
+        bgDiv.style.backgroundImage = `url('${slide.bgImage}')`;
+        bgContainer.appendChild(bgDiv);
+      });
+    }
+
+    // 2. Render Text Content and Trigger Crossfade
+    function renderSlide(index) {
+      const slide = slides[index];
+      
+      // Update Backgrounds
+      document.querySelectorAll('.bg-slide').forEach((el, i) => {
+        if(i === index) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+
+      // Inject Text Content (Triggers blurFadeUp animation natively)
+      slideWrapper.innerHTML = `
+        <div class="flex flex-wrap items-center gap-3 sm:gap-6 mb-6 md:mb-8 text-xs sm:text-sm animate-blur-fade-up" style="animation-delay: 300ms;">
+          <div class="flex items-center gap-1.5 font-medium text-white">
+            <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-white text-white"></i>
+            ${slide.meta1}
+          </div>
+          <div class="flex items-center gap-1.5 text-gray-300">
+            <i data-lucide="clock" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            ${slide.meta2}
+          </div>
+          <div class="flex items-center gap-1.5 text-gray-300">
+            <i data-lucide="calendar" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+            ${slide.meta3}
+          </div>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-[-0.04em] mb-4 md:mb-6 animate-blur-fade-up text-white" style="animation-delay: 400ms;">
+          ${slide.title}
+        </h1>
+
+        <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-6 md:mb-12 max-w-2xl animate-blur-fade-up" style="animation-delay: 500ms;">
+          ${slide.desc}
+        </p>
+
+        <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+          <button class="flex items-center justify-center bg-white text-black rounded-full font-medium px-6 sm:px-8 py-2.5 sm:py-3 hover:bg-gray-200 transition-colors animate-blur-fade-up" style="animation-delay: 600ms;">
+            <i data-lucide="play" class="w-[18px] h-[18px] fill-black text-black mr-2"></i>
+            ${slide.cta1}
+          </button>
+          
+          <button class="liquid-glass rounded-full font-medium px-6 sm:px-8 py-2.5 sm:py-3 animate-blur-fade-up text-white" style="animation-delay: 700ms;">
+            ${slide.cta2}
+          </button>
+        </div>
+      `;
+      
+      // Re-initialize icons for the newly injected HTML
+      lucide.createIcons();
+    }
+
+    // 3. Navigation Controls
+    function goToSlide(index) {
+      currentSlide = index;
+      renderSlide(currentSlide);
+    }
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      currentSlide = (currentSlide + 1) % slides.length;
+      renderSlide(currentSlide);
+    });
+
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      currentSlide = (currentSlide === 0) ? slides.length - 1 : currentSlide - 1;
+      renderSlide(currentSlide);
+    });
+
+    // 4. Mobile Menu Toggle Logic
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+    let isMenuOpen = false;
+
+    function toggleMenu() {
+      isMenuOpen = !isMenuOpen;
+      
+      if (isMenuOpen) {
+        mobileMenu.classList.remove('-translate-y-4', 'opacity-0', 'pointer-events-none');
+        mobileMenu.classList.add('translate-y-0', 'opacity-100');
+        menuIcon.classList.add('rotate-180', 'opacity-0', 'scale-50');
+        menuIcon.classList.remove('rotate-0', 'opacity-100', 'scale-100');
+        closeIcon.classList.remove('-rotate-180', 'opacity-0', 'scale-50');
+        closeIcon.classList.add('rotate-0', 'opacity-100', 'scale-100');
+      } else {
+        mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
+        mobileMenu.classList.remove('translate-y-0', 'opacity-100');
+        menuIcon.classList.remove('rotate-180', 'opacity-0', 'scale-50');
+        menuIcon.classList.add('rotate-0', 'opacity-100', 'scale-100');
+        closeIcon.classList.add('-rotate-180', 'opacity-0', 'scale-50');
+        closeIcon.classList.remove('rotate-0', 'opacity-100', 'scale-100');
+      }
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+
+    // Initial Setup
+    initBackgrounds();
+    renderSlide(currentSlide);
+  </script>
+</body>
+</html>
