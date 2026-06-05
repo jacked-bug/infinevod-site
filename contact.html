@@ -4,123 +4,170 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us | InfinevoD BIM Excellence</title>
+  
+  <!-- Tailwind & Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Particles.js for the interactive white dots -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: black; color: white; overflow-x: hidden; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background-color: black; 
+      color: white; 
+      overflow-x: hidden; 
+      margin: 0; 
+    }
     
-    /* Background Ken Burns (Re-using your cinematic style) */
-    .contact-bg {
-      position: fixed; inset: 0; z-index: 0;
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('./images/docs.jpg'); /* Using your docs image as bg */
-      background-size: cover; background-position: center;
-      animation: kenBurns 30s infinite alternate;
+    /* 1. Interactive Background Image Wrapper */
+    .bg-wrapper {
+      position: fixed;
+      inset: -5%; /* Made 5% larger so it has room to pan without showing edges */
+      width: 110%;
+      height: 110%;
+      z-index: 0;
+      /* Link to your exact uploaded image */
+      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('./images/contact-bg.jpg'); 
+      background-size: cover; 
+      background-position: center;
+      /* Smooth transition for the mouse tracking */
+      transition: transform 0.1s ease-out; 
+      will-change: transform;
     }
 
-    @keyframes kenBurns { from { transform: scale(1); } to { transform: scale(1.1); } }
+    /* 2. Particles Container (The floating white dots) */
+    #particles-js {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1; 
+      pointer-events: none; /* Let clicks pass through to the form */
+    }
 
+    /* 3. Liquid Glass UI */
     .liquid-glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(16px); 
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0,0,0,0.5);
     }
 
     input, textarea {
-      background: rgba(255, 255, 255, 0.05) !important;
+      background: rgba(255, 255, 255, 0.03) !important;
       border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      color: white !important; outline: none; transition: all 0.3s;
+      color: white !important; 
+      outline: none; 
+      transition: all 0.3s;
     }
 
-    input:focus, textarea:focus { border-color: white !important; background: rgba(255, 255, 255, 0.1) !important; }
+    input:focus, textarea:focus { 
+      border-color: rgba(255,255,255,0.5) !important; 
+      background: rgba(255, 255, 255, 0.08) !important; 
+    }
 
-    @keyframes blurFadeUp { from { opacity: 0; filter: blur(15px); transform: translateY(30px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
-    .animate-up { opacity: 0; animation: blurFadeUp 0.8s ease-out forwards; }
+    /* 4. Entry Animations */
+    @keyframes blurFadeUp { 
+      from { opacity: 0; filter: blur(15px); transform: translateY(30px); } 
+      to { opacity: 1; filter: blur(0); transform: translateY(0); } 
+    }
+    .animate-up { 
+      opacity: 0; 
+      animation: blurFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center">
 
-  <div class="contact-bg"></div>
+  <!-- Interactive Background Layers -->
+  <div class="bg-wrapper" id="parallax-bg"></div>
+  <div id="particles-js"></div>
 
-  <!-- Navbar -->
+  <!-- Navbar (z-50) -->
   <nav class="relative w-full z-50 flex justify-between items-center px-6 md:px-12 py-6">
     <a href="index.html" class="flex items-center space-x-2">
-      <img src="./images/logo.png" alt="Logo" class="h-10 w-auto">
+      <img src="./images/logo.png" alt="Logo" class="h-8 md:h-12 w-auto object-contain">
     </a>
-    <a href="index.html" class="liquid-glass rounded-full px-6 py-2 text-sm font-medium flex items-center">
+    <a href="index.html" class="liquid-glass rounded-full px-6 py-2 text-sm font-medium flex items-center hover:bg-white/10 transition-colors pointer-events-auto">
       <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Experience
     </a>
   </nav>
 
-  <!-- Contact Form Content -->
-  <main class="relative z-10 w-full max-w-5xl px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+  <!-- Contact Form Content (z-10) -->
+  <main class="relative z-10 w-full max-w-5xl px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-16 items-center flex-1">
     
     <!-- Left: Info -->
-    <div class="animate-up" style="animation-delay: 100ms;">
-      <h1 class="text-5xl font-light tracking-tight mb-6">Get in Touch <br><span class="text-gray-400 font-normal">for BIM Excellence</span></h1>
-      <p class="text-gray-400 text-lg mb-12">Connect with our structural and architectural specialists to optimize your building lifecycle.</p>
+    <div class="animate-up pointer-events-none" style="animation-delay: 100ms;">
+      <h1 class="text-5xl font-light tracking-tight mb-6 text-white drop-shadow-lg">Get in Touch <br><span class="text-gray-400 font-normal">for BIM Excellence</span></h1>
+      <p class="text-gray-400 text-lg mb-12 drop-shadow-md">Connect with our structural and architectural specialists to optimize your building lifecycle.</p>
       
       <div class="space-y-8">
         <div class="flex items-start space-x-4">
-          <i data-lucide="map-pin" class="w-6 h-6 text-gray-400 mt-1"></i>
-          <div>
-            <h3 class="font-medium text-white">Address</h3>
-            <p class="text-gray-400 text-sm">Keethas Arcade, 4th Sundar Nagar, KK Nagar, Trichy, INDIA - 620 021</p>
+          <div class="p-3 liquid-glass rounded-full">
+            <i data-lucide="map-pin" class="w-5 h-5 text-white"></i>
+          </div>
+          <div class="mt-1">
+            <h3 class="font-medium text-white tracking-wide">Headquarters</h3>
+            <p class="text-gray-400 text-sm leading-relaxed mt-1">Keethas Arcade, 4th Sundar Nagar,<br>KK Nagar, Trichy, INDIA - 620 021</p>
           </div>
         </div>
+        
         <div class="flex items-start space-x-4">
-          <i data-lucide="mail" class="w-6 h-6 text-gray-400 mt-1"></i>
-          <div>
-            <h3 class="font-medium text-white">Email</h3>
-            <p class="text-gray-400 text-sm">saymyname911walt@gmail.com</p>
+          <div class="p-3 liquid-glass rounded-full">
+            <i data-lucide="mail" class="w-5 h-5 text-white"></i>
+          </div>
+          <div class="mt-1">
+            <h3 class="font-medium text-white tracking-wide">Direct Inquiry</h3>
+            <p class="text-gray-400 text-sm leading-relaxed mt-1">saymyname911walt@gmail.com</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Right: Form -->
-    <div class="liquid-glass p-8 rounded-3xl animate-up" style="animation-delay: 300ms;">
-      <h2 class="text-2xl font-medium mb-8">Send Message</h2>
+    <!-- Right: Interactive Form -->
+    <div class="liquid-glass p-8 rounded-3xl animate-up pointer-events-auto" style="animation-delay: 300ms;">
+      <h2 class="text-2xl font-medium mb-8 text-white">Send Message</h2>
       
-      <!-- FORM ACTION: Using FormSubmit.co to actually send the email -->
       <form action="https://formsubmit.co/saymyname911walt@gmail.com" method="POST" class="space-y-5">
         
-        <!-- Honeypot to prevent spam -->
+        <!-- FormSubmit Config -->
         <input type="text" name="_honey" style="display:none">
-        <!-- Disable Captcha for clean UI -->
         <input type="hidden" name="_captcha" value="false">
-        <!-- Success Redirect -->
         <input type="hidden" name="_next" value="https://infinevod-site.vercel.app/">
 
         <div class="grid grid-cols-2 gap-4">
           <div class="flex flex-col space-y-2">
-            <label class="text-xs uppercase tracking-widest text-gray-500">Name</label>
-            <input type="text" name="name" required class="p-3 rounded-xl">
+            <label class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">Name</label>
+            <input type="text" name="name" required class="p-3 rounded-xl text-sm">
           </div>
           <div class="flex flex-col space-y-2">
-            <label class="text-xs uppercase tracking-widest text-gray-500">Phone</label>
-            <input type="tel" name="phone" class="p-3 rounded-xl">
+            <label class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">Phone</label>
+            <input type="tel" name="phone" class="p-3 rounded-xl text-sm">
           </div>
         </div>
 
         <div class="flex flex-col space-y-2">
-          <label class="text-xs uppercase tracking-widest text-gray-500">E-mail</label>
-          <input type="email" name="email" required class="p-3 rounded-xl">
+          <label class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">E-mail</label>
+          <input type="email" name="email" required class="p-3 rounded-xl text-sm">
         </div>
 
         <div class="flex flex-col space-y-2">
-          <label class="text-xs uppercase tracking-widest text-gray-500">Subject</label>
-          <input type="text" name="subject" class="p-3 rounded-xl">
+          <label class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">Subject</label>
+          <input type="text" name="subject" class="p-3 rounded-xl text-sm">
         </div>
 
         <div class="flex flex-col space-y-2">
-          <label class="text-xs uppercase tracking-widest text-gray-500">Message</label>
-          <textarea name="message" required rows="4" class="p-3 rounded-xl resize-none"></textarea>
+          <label class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">Message</label>
+          <textarea name="message" required rows="4" class="p-3 rounded-xl resize-none text-sm"></textarea>
         </div>
 
-        <button type="submit" class="w-full bg-white text-black font-semibold py-4 rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest text-xs">
+        <button type="submit" class="w-full bg-white text-black font-semibold py-4 mt-2 rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-[0.2em] text-xs">
           Send Now
         </button>
       </form>
@@ -128,6 +175,74 @@
 
   </main>
 
-  <script>lucide.createIcons();</script>
+  <!-- JAVASCRIPT: Parallax & Particles Logic -->
+  <script>
+    // 1. Initialize Icons
+    lucide.createIcons();
+
+    // 2. Mouse Parallax Effect for Background Image
+    document.addEventListener("mousemove", parallax);
+    function parallax(e) {
+      const bg = document.getElementById('parallax-bg');
+      // Calculate mouse position relative to center of screen
+      const x = (window.innerWidth / 2 - e.pageX) / 40; // Higher divisor = slower movement
+      const y = (window.innerHeight / 2 - e.pageY) / 40;
+      
+      bg.style.transform = `translateX(${x}px) translateY(${y}px) scale(1.05)`;
+    }
+
+    // 3. Particles.js Configuration (Matching the Point-Cloud look)
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle" },
+        "opacity": { 
+          "value": 0.5, 
+          "random": true, 
+          "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } 
+        },
+        "size": { 
+          "value": 2.5, 
+          "random": true, 
+          "anim": { "enable": false } 
+        },
+        "line_linked": {
+          "enable": true, // Connects the dots
+          "distance": 120,
+          "color": "#ffffff",
+          "opacity": 0.15, // Very faint lines to match the point-cloud aesthetic
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 0.8, // Slow, ambient movement
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false
+        }
+      },
+      "interactivity": {
+        "detect_on": "window",
+        "events": {
+          "onhover": { 
+            "enable": true, 
+            "mode": "grab" // Particles reach out to touch your cursor
+          },
+          "onclick": { "enable": false },
+          "resize": true
+        },
+        "modes": {
+          "grab": { 
+            "distance": 200, 
+            "line_linked": { "opacity": 0.6 } // Lines brighten when they grab the cursor
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
 </body>
 </html>
